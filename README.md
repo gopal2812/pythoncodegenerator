@@ -1,9 +1,8 @@
-# pythoncodegenerator
-pythoncodegeneratorusingtransformer
-Dataset
+# python code generator
+## Dataset
 I have downloaded the CodeSerNet Data(https://github.com/github/CodeSearchNet) for initial training. I have taken the cleaned code of small size (200) for training the model and then train the model with the assignment data.For training both the I have kept the vocabulary of assignment data for both the training sample.In the Assignment data:There are some 4600+ examples of English text to python code and From the CodeSearchNEt data Added the another 6K small samples for training.I have then converted the list into dataframe and then saved the file as CSV to use tabulardataset function with CSV file extension. I have used a dataset iterator for training and validation purposes. First I train and validate my model in a combined dataset. I pick the best model and then used it as a initial model for assignment dataset.It has improved the overall perplexity
 
-Data Preparation/preprocessing Strategy
+## Data Preparation/preprocessing Strategy
 a) Ran the pep8 command to align the data and fix some of the code automatically.
 b) Ran yapf tool to automatically fix some of the compilation issue.This tool helps in solving a lot of issues and indicating where the issues are.
 pip install yapf
@@ -25,7 +24,7 @@ c) Added the python function to remove the comment between the code (def remove_
 d) Added  the dataframe logic has given me a two list and they are Code and Description
 
 
-Embedding Strategy
+## Embedding Strategy
 I did some experimentation on Tokenizer and Embedding. I used the separated tokenizer for code and Description. 
 i) For Description I used the spacy en_core_web_trf.
 ii)For Code embedding, I tried with two tokenizers. In the final model spacy symbol has provided better handling. I also tried AST as mentioned in the link but failed in implementing it fully due to the timeline. (https://www.asmeurer.com/brown-water-python/alternatives.html). I also explored cubert but couldn't 
@@ -47,7 +46,7 @@ def tokenize_python(code_snippet):
 b) Spacy English tokenizer with special character handling
 
 
-HyperParameter:
+## HyperParameter:
 i) Increased DEC_PF_DIM , ENC_LAYER and drop_out values for better learning.I also done some experiment with Vocab length and fine tuned with following 
 parameter
 MAX_VOCAB_LENGTH =200 
@@ -56,7 +55,6 @@ MAX_VOCAB_LENGTH_CODE =300
 INPUT_DIM = len(SRC.vocab)
 OUTPUT_DIM = len(TRG.vocab)
 HID_DIM = 256
-# ENC_LAYERS = 2
 ENC_LAYERS = 3
 #DEC_LAYERS = 2
 DEC_LAYERS = 3
@@ -67,19 +65,19 @@ DEC_PF_DIM = 1024
 ENC_DROPOUT = 0.2
 DEC_DROPOUT = 0.2
 
-4) Training and scheduling:
+## Training and scheduling:
 For finer tuning use the ReduceLROnPlateau scheduler with low learning rate. It helps in further fine tuning  the model's perplexity.
 scheduler = ReduceLROnPlateau(optimizer, patience=5, min_lr=1e-8,verbose=True)
 
-5) Metrics used Perplexity and the model is able to achieve the following result for the assignment dataset. 
+##Metrics used Perplexity and the model is able to achieve the following result for the assignment dataset. 
 Epoch: 02 | Time: 0m 3s
 Train Loss: 0.749 | Train PPL:   2.114
 Val. Loss: 0.696 |  Val. PPL:   2.005
 
-6) Display graph for attention has been captured for generated input.
-7) Loss function: I settled with crossentropy loss function only as it has given me the best result.
+## Display graph for attention has been captured for generated input.
+## Loss function: I settled with crossentropy loss function only as it has given me the best result.
 
-Sample O/p
+##Sample O/p
 #########################################################################################################
 Description: write a python function to that performs as relu
 Source Code:
